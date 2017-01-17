@@ -18,6 +18,7 @@ public class CharacterManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		this.GetComponent<TrailRenderer> ().sortingOrder = -2;
 		flightDuration = TimeSpan.Zero;
 		maximumflightDuration = TimeSpan.FromSeconds (1);
 		grounded = true;
@@ -90,6 +91,7 @@ public class CharacterManager : MonoBehaviour {
 		grounded = true;
 		hasControl = true;
 		this.transform.localPosition = initialPosition;
+		this.gameObject.SetActive (true);
 	}
 
 	public void Die() {
@@ -97,11 +99,11 @@ public class CharacterManager : MonoBehaviour {
 	}
 
 	protected void OnMenu() {
-		SetGameState (StaticData.AvailableGameStates.Playing);
+		SetGameState (StaticData.AvailableGameStates.Menu);
 	}
 
 	protected void OnStarting() {
-		SetGameState (StaticData.AvailableGameStates.Playing);
+		SetGameState (StaticData.AvailableGameStates.Starting);
 	}
 
 	protected void OnPausing() {
