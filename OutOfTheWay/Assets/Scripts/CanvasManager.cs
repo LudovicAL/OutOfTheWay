@@ -32,7 +32,7 @@ public class CanvasManager : MonoBehaviour {
 		panelGame.SetActive (false);
 		panelStarting.SetActive (false);
 		panelMiniMenu.SetActive (false);
-		switch (scriptsBucket.GetComponent<GameStatesManager>().gameState){
+		switch (gameState){
 			case StaticData.AvailableGameStates.Menu:
 				panelMenu.SetActive (true);
 				break;

@@ -11,6 +11,7 @@ public class CharacterManager : MonoBehaviour {
 	public float climbingSpeed;
 	public float flyingVelocity;
 	public float jumpForce;
+	public int numberOfParticles;
 	public TimeSpan maximumflightDuration;
 	public bool grounded { get; private set; }
 	public bool hasControl { get; private set; }
@@ -95,6 +96,8 @@ public class CharacterManager : MonoBehaviour {
 	}
 
 	public void Die() {
+		scriptsBucket.transform.position = this.transform.position;
+		scriptsBucket.GetComponent<ParticleSystem> ().Emit (numberOfParticles);
 		this.gameObject.SetActive (false);
 	}
 
