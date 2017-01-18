@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 public class CanvasManager : MonoBehaviour {
 
+	private AudioManager am;
 	public Text textCountDown;
 	public GameObject panelMenu;
 	public GameObject panelGame;
@@ -15,12 +16,15 @@ public class CanvasManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		am = scriptsBucket.GetComponent<AudioManager> ();
 		scriptsBucket.GetComponent<GameStatesManager> ().MenuGameState.AddListener(OnMenu);
 		scriptsBucket.GetComponent<GameStatesManager> ().StartingGameState.AddListener(OnStarting);
 		scriptsBucket.GetComponent<GameStatesManager> ().PausedGameState.AddListener(OnPausing);
 		scriptsBucket.GetComponent<GameStatesManager> ().PlayingGameState.AddListener(OnPlaying);
 		SetGameState (scriptsBucket.GetComponent<GameStatesManager> ().gameState);
-		OnDropDownValueChanged ();
+		for (int i = 1, max = ddPlayer.Length; i < max; i++) {
+			ddPlayer [i].value = 1;
+		}
 	}
 	
 	// Update is called once per frame
@@ -69,23 +73,27 @@ public class CanvasManager : MonoBehaviour {
 	}
 
 	public void OnPlayButtonClick() {
+		am.PlayButtonSound ();
 		scriptsBucket.GetComponent<GameStatesManager> ().ChangeGameState (StaticData.AvailableGameStates.Starting);
 	}
 
 	public void OnMenuButtonClick() {
+		am.PlayButtonSound ();
 		scriptsBucket.GetComponent<GameStatesManager> ().ChangeGameState (StaticData.AvailableGameStates.Menu);
 	}
 
 	public void OnHowToButtonClick() {
-		
+		am.PlayButtonSound ();
 	}
 
 	public void OnExitButtonClick() {
+		am.PlayButtonSound ();
 		Application.Quit ();
 	}
 
 	//Determines what intelligence will control every player
 	public void OnDropDownValueChanged() {
+		am.PlayButtonSound ();
 		StaticData.playerList.Clear ();
 		StaticData.computerAIList.Clear ();
 		StaticData.rejectedList.Clear ();
@@ -97,17 +105,32 @@ public class CanvasManager : MonoBehaviour {
 				case "Human":
 					StaticData.playerList.Add (StaticData.characterList [i]);
 					StaticData.characterList [i].GetComponent<CharacterManager> ().intelligence = StaticData.AvailableIntelligences.Human;
+					RemoveComputerAI (StaticData.characterList [i]);
 					break;
 				case "Computer AI":
-					StaticData.computerAIList.Add (StaticData.characterList[i]);
+					StaticData.computerAIList.Add (StaticData.characterList [i]);
 					StaticData.characterList [i].GetComponent<CharacterManager> ().intelligence = StaticData.AvailableIntelligences.ComputerAI;
+					AddComputerAI (StaticData.characterList [i]);
 					break;
 				case "None":
 					StaticData.rejectedList.Add (StaticData.characterList[i]);
 					StaticData.characterList [i].GetComponent<CharacterManager> ().intelligence = StaticData.AvailableIntelligences.None;
+					RemoveComputerAI (StaticData.characterList [i]);
 					break;
 			}
 		}
+	}
+
+	//Adds a CompAI component to a GameObject
+	private void AddComputerAI(GameObject go) {
+		if (go.GetComponent<CompAI> () == null) {
+			go.AddComponent<CompAI> ();
+		}
+	}
+
+	//Removes a CompAI component from a GameObject
+	private void RemoveComputerAI(GameObject go) {
+		Destroy (go.GetComponent<CompAI> ());
 	}
 
 	protected void OnMenu() {

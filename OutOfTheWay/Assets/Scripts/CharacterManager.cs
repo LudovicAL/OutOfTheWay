@@ -4,6 +4,7 @@ using System;
 public class CharacterManager : MonoBehaviour {
 
 	private StaticData.AvailableGameStates gameState;
+	private AudioManager am;
 	public StaticData.AvailableIntelligences intelligence;
 	public GameObject scriptsBucket;
 	private Rigidbody2D selfRigidbody;
@@ -20,6 +21,7 @@ public class CharacterManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		am = scriptsBucket.GetComponent<AudioManager> ();
 		this.GetComponent<TrailRenderer> ().sortingOrder = -2;
 		maximumflightDuration = TimeSpan.FromSeconds (1);
 		selfRigidbody = this.GetComponent<Rigidbody2D> ();
@@ -35,41 +37,38 @@ public class CharacterManager : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if (gameState == StaticData.AvailableGameStates.Playing) {
-			if (intelligence == StaticData.AvailableIntelligences.Human) {
-				if (Input.GetButton("Horizontal") && hasControl) {	//Move left or right
-					MoveLeftRight(Mathf.Sign(Input.GetAxisRaw("Horizontal")));
-				}
-				if (grounded) {
-					if (Input.GetButton("Vertical")) {	//Jump
-						if (Input.GetButton("Fire3")) {
-							Jump (1.5f);	//High jump
-						} else {
-							Jump (1.0f);	//Low jump
-						}
-					}
+		if (intelligence == StaticData.AvailableIntelligences.Human && gameState == StaticData.AvailableGameStates.Playing) {
+			if (Input.GetButton("Horizontal")) {	//Move left or right
+				MoveLeftRight(Mathf.Sign(Input.GetAxisRaw("Horizontal")));
+			}
+			if (Input.GetButton("Vertical")) {	//Jumps or fly
+				if (Input.GetButton("Fire3")) {
+					JumpFly (1.5f);	//High jump or fly
 				} else {
-					if (Input.GetButton("Vertical")) {	//Fly
-						if (selfRigidbody.velocity.y <= flyingVelocity && flightDuration < maximumflightDuration) {
-							Fly ();
-						}
-					}
+					JumpFly (1.0f);	//Low jump or fly
 				}
 			}
 		}
 	}
 
-	public void Fly() {
-		selfRigidbody.velocity = new Vector2 (selfRigidbody.velocity.x, flyingVelocity);
-		flightDuration += TimeSpan.FromSeconds(Time.deltaTime);
+	//Makes the character jump or fly
+	public void JumpFly(float modifier) {
+		if (grounded) {	//Will jump
+			selfRigidbody.velocity = new Vector2 (selfRigidbody.velocity.x, jumpForce * modifier);
+			am.PlayJumpSound ();
+		} else {	//Will fly
+			if (selfRigidbody.velocity.y <= flyingVelocity && flightDuration < maximumflightDuration) {
+				selfRigidbody.velocity = new Vector2 (selfRigidbody.velocity.x, flyingVelocity);
+				flightDuration += TimeSpan.FromSeconds(Time.deltaTime);
+			}
+		}
 	}
 
-	public void Jump(float modifier) {
-		selfRigidbody.velocity = new Vector2 (selfRigidbody.velocity.x, jumpForce * modifier);
-	}
-
+	//Makes the character move left or right
 	public void MoveLeftRight(float direction) {
-		selfRigidbody.velocity = new Vector2(movementSpeed * direction, selfRigidbody.velocity.y);
+		if (hasControl) {
+			selfRigidbody.velocity = new Vector2(movementSpeed * direction, selfRigidbody.velocity.y);
+		}
 	}
 
 	void OnCollisionStay2D (Collision2D col) {
@@ -121,6 +120,7 @@ public class CharacterManager : MonoBehaviour {
 
 	//Kills the character
 	public void Die() {
+		am.PlayDeathSound ();
 		scriptsBucket.transform.position = this.transform.position;
 		scriptsBucket.GetComponent<ParticleSystem> ().Emit (numberOfParticles);
 		this.gameObject.SetActive (false);

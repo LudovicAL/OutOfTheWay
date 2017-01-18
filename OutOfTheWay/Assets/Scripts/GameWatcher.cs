@@ -3,24 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class GameWatcher : MonoBehaviour {
-
+	public GameObject[] characters; 
 	public GameObject scriptsBucket;
 	private StaticData.AvailableGameStates gameState;
 	private bool ending;
 
 	void Awake() {
-		scriptsBucket.GetComponent<GameStatesManager> ().MenuGameState.AddListener(OnMenu);
-		scriptsBucket.GetComponent<GameStatesManager> ().StartingGameState.AddListener(OnStarting);
-		scriptsBucket.GetComponent<GameStatesManager> ().PausedGameState.AddListener(OnPausing);
-		scriptsBucket.GetComponent<GameStatesManager> ().PlayingGameState.AddListener(OnPlaying);
-		SetGameState (scriptsBucket.GetComponent<GameStatesManager> ().gameState);
-		GameObject[] charTempo = GameObject.FindGameObjectsWithTag("Player");
-		foreach (GameObject c in charTempo) {
+		foreach (GameObject c in characters) {
 			StaticData.characterList.Add (c);
 		}
 	}
 	// Use this for initialization
 	void Start () {
+		scriptsBucket.GetComponent<GameStatesManager> ().MenuGameState.AddListener(OnMenu);
+		scriptsBucket.GetComponent<GameStatesManager> ().StartingGameState.AddListener(OnStarting);
+		scriptsBucket.GetComponent<GameStatesManager> ().PausedGameState.AddListener(OnPausing);
+		scriptsBucket.GetComponent<GameStatesManager> ().PlayingGameState.AddListener(OnPlaying);
+		SetGameState (scriptsBucket.GetComponent<GameStatesManager> ().gameState);
 		ending = false;
 	}
 	
@@ -35,6 +34,7 @@ public class GameWatcher : MonoBehaviour {
 		}
 	}
 
+	//Called when it has been detected there is less then 2 players left in the game
 	IEnumerator EndGame() {
 		ending = true;
 		yield return new WaitForSeconds(1.5f);
