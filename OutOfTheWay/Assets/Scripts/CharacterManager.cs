@@ -7,7 +7,7 @@ public class CharacterManager : MonoBehaviour {
 	private AudioManager am;
 	public StaticData.AvailableIntelligences intelligence;
 	public GameObject scriptsBucket;
-	private Rigidbody2D selfRigidbody;
+	public Rigidbody2D selfRigidbody { get; private set; }
 	private TimeSpan flightDuration;
 	public float movementSpeed;
 	public float climbingSpeed;

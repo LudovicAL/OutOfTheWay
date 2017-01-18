@@ -33,7 +33,9 @@ public class CompAI : MonoBehaviour {
 		if (gameState == StaticData.AvailableGameStates.Playing) {
 			if (target != null) {
 				if (target.activeSelf) {
-					cm.MoveLeftRight (Mathf.Sign(target.transform.position.x - this.transform.position.x));
+					if (cm.selfRigidbody.velocity.y >= 0) {
+						cm.MoveLeftRight (Mathf.Sign(target.transform.position.x - this.transform.position.x));
+					}
 					if (cm.grounded) {
 						cm.JumpFly(Random.Range(1.0f, 1.5f));
 					}
