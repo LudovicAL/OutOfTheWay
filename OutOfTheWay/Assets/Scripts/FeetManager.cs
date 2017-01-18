@@ -13,11 +13,11 @@ public class FeetManager : MonoBehaviour {
 		
 	}
 
-	void OnTriggerEnter2D(Collider2D col) {
+	void OnTriggerEnter2D(Collider2D col) {	//Character's feet touched something
 		selfCharacter.OnFeetTriggerEnter (col);
 	}
 
-	void OnTriggerExit2D(Collider2D col) {
+	void OnTriggerExit2D(Collider2D col) {	//Character's feet stopped touching something
 		selfCharacter.OnFeetTriggerExit (col);
 	}
 }

@@ -9,10 +9,12 @@ public class CameraScaler : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		//Sets the camera scale
 		Camera.main.orthographicSize = widthToBeSeen * (float)Screen.height / (float)Screen.width * 0.5f;
+		//Sets the camera position
 		int e = 0;
-		Plane[] planes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
-		while (!GeometryUtility.TestPlanesAABB (planes, floor.GetComponent<SpriteRenderer> ().bounds) && e < 10) {
+		Plane[] planes = GeometryUtility.CalculateFrustumPlanes (Camera.main);
+		while (!GeometryUtility.TestPlanesAABB (planes, floor.GetComponent<SpriteRenderer> ().bounds) && e < 1000) {	//While the camera is too high
 			Camera.main.transform.Translate(Vector3.down);
 			planes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
 			e++;

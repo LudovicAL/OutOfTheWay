@@ -15,7 +15,7 @@ public class HeadManager : MonoBehaviour {
 		
 	}
 
-	void OnTriggerEnter2D(Collider2D col) {
+	void OnTriggerEnter2D(Collider2D col) {	//Character's head touched something
 		selfCharacter.OnHeadTriggerEnter (col);
 	}
 }
