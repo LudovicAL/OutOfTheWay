@@ -7,6 +7,8 @@ public class CanvasManager : MonoBehaviour {
 	private AudioManager am;
 	public Text textCountDown;
 	public GameObject panelMenu;
+	public GameObject panelPrimaryMenu;
+	public GameObject panelHowToPlay;
 	public GameObject panelGame;
 	public GameObject panelStarting;
 	public GameObject panelMiniMenu;
@@ -38,9 +40,16 @@ public class CanvasManager : MonoBehaviour {
 		panelGame.SetActive (false);
 		panelStarting.SetActive (false);
 		panelMiniMenu.SetActive (false);
+		Button[] buttons;
 		switch (gameState){
 			case StaticData.AvailableGameStates.Menu:
 				panelMenu.SetActive (true);
+				panelPrimaryMenu.SetActive (true);
+				panelHowToPlay.SetActive (false);
+				buttons = panelMenu.GetComponentsInChildren<Button> ();
+				if (buttons.Length > 0) {
+					buttons [0].Select();
+				}
 				break;
 			case StaticData.AvailableGameStates.Starting:
 				panelGame.SetActive (true);
@@ -53,6 +62,10 @@ public class CanvasManager : MonoBehaviour {
 			case StaticData.AvailableGameStates.Paused:
 				panelGame.SetActive (true);
 				panelMiniMenu.SetActive (true);
+				buttons = panelMiniMenu.GetComponentsInChildren<Button> ();
+				if (buttons.Length > 0) {
+					buttons [0].Select();
+				}
 				break;
 			case StaticData.AvailableGameStates.Playing:
 				panelGame.SetActive (true);
@@ -62,13 +75,10 @@ public class CanvasManager : MonoBehaviour {
 
 	//Shows a countdown before the game actually starts
 	IEnumerator ShowCountDown() {
-		textCountDown.text = "3";    
-		yield return new WaitForSeconds(0.8f);
-		textCountDown.text = "2";    
-		yield return new WaitForSeconds(0.7f);
-		textCountDown.text = "1";    
-		yield return new WaitForSeconds(0.7f);
-		textCountDown.text = "";
+		for (int i = 3; i > 0; i--) {
+			textCountDown.text = i.ToString();    
+			yield return new WaitForSeconds(0.7f);
+		}
 		scriptsBucket.GetComponent<GameStatesManager> ().ChangeGameState (StaticData.AvailableGameStates.Playing);
 	}
 
@@ -82,8 +92,14 @@ public class CanvasManager : MonoBehaviour {
 		scriptsBucket.GetComponent<GameStatesManager> ().ChangeGameState (StaticData.AvailableGameStates.Menu);
 	}
 
-	public void OnHowToButtonClick() {
+	public void OnHowToPlayButtonClick() {
 		am.PlayButtonSound ();
+		panelPrimaryMenu.SetActive (false);
+		panelHowToPlay.SetActive (true);
+		Button[] buttons = panelHowToPlay.GetComponentsInChildren<Button> ();
+		if (buttons.Length > 0) {
+			buttons [0].Select();
+		}
 	}
 
 	public void OnExitButtonClick() {
@@ -100,7 +116,6 @@ public class CanvasManager : MonoBehaviour {
 		StaticData.aliveList.Clear ();
 		StaticData.deadList.Clear ();
 		for (int i = 0, maxA = ddPlayer.Length, maxB = StaticData.characterList.Count; i < maxA && i < maxB; i++) {
-			//Debug.Log ("Player " + i + " is " + ddPlayer [i].GetComponentInChildren<Text> ().text);
 			switch (ddPlayer[i].GetComponentInChildren<Text>().text) {
 				case "Human":
 					StaticData.playerList.Add (StaticData.characterList [i]);

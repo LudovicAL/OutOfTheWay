@@ -7,6 +7,7 @@ public class CharacterManager : MonoBehaviour {
 	private AudioManager am;
 	public StaticData.AvailableIntelligences intelligence;
 	public GameObject scriptsBucket;
+	public GameObject textMesh;
 	public Rigidbody2D selfRigidbody { get; private set; }
 	private TimeSpan flightDuration;
 	public float movementSpeed;
@@ -32,7 +33,6 @@ public class CharacterManager : MonoBehaviour {
 		scriptsBucket.GetComponent<GameStatesManager> ().PausedGameState.AddListener(OnPausing);
 		scriptsBucket.GetComponent<GameStatesManager> ().PlayingGameState.AddListener(OnPlaying);
 		SetGameState (scriptsBucket.GetComponent<GameStatesManager> ().gameState);
-		intelligence = StaticData.AvailableIntelligences.Human;
 	}
 
 	// Update is called once per frame
@@ -79,7 +79,7 @@ public class CharacterManager : MonoBehaviour {
 
 	public void OnHeadTriggerEnter(Collider2D col) {
 		if (col.transform.tag == "UpperWall") {	//Character's head touched the upper wall
-			selfRigidbody.velocity = new Vector2 (movementSpeed * 2 * Mathf.Sign(Camera.main.transform.position.x - this.transform.position.x), selfRigidbody.velocity.y);
+			selfRigidbody.velocity = new Vector2 (movementSpeed * Mathf.Sign(Camera.main.transform.position.x - this.transform.position.x), selfRigidbody.velocity.y);
 			hasControl = false;
 		} else if (col.transform.tag == "Feet") {	//Character's head was touched by another character's feet
 			Die ();
@@ -130,18 +130,22 @@ public class CharacterManager : MonoBehaviour {
 
 	protected void OnMenu() {
 		SetGameState (StaticData.AvailableGameStates.Menu);
+		textMesh.SetActive (false);
 	}
 
 	protected void OnStarting() {
 		SetGameState (StaticData.AvailableGameStates.Starting);
+		textMesh.SetActive (true);
 	}
 
 	protected void OnPausing() {
 		SetGameState (StaticData.AvailableGameStates.Paused);
+		textMesh.SetActive (true);
 	}
 
 	protected void OnPlaying() {
 		SetGameState (StaticData.AvailableGameStates.Playing);
+		textMesh.SetActive (false);
 	}
 
 	public void SetGameState(StaticData.AvailableGameStates state) {
