@@ -18,6 +18,7 @@ public class CanvasManager : MonoBehaviour {
 	public GameObject panelMiniMenu;
 	public GameObject scriptsBucket;
 	public Dropdown[] ddPlayer;
+	public Text inputMapText;
 	private StaticData.AvailableGameStates gameState;
 
 	// Use this for initialization
@@ -99,6 +100,12 @@ public class CanvasManager : MonoBehaviour {
 	public void OnHowToPlayButtonClick() {
 		am.PlayButtonSound ();
 		panelPrimaryMenu.SetActive (false);
+		#if UNITY_WEBGL
+			inputMapText.text = "Player1: LEFT/RIGHT ARROWS to move left and right. UP ARROW to jump and fly. Hold the right shift key when jumping to jump higher.\n\n"
+				+ "Player2: A/D to move left and right. W to jump and fly. Hold the left ctrl key when jumping to jump higher.\n\n"
+				+ "Player3: You must connect an external controller to make player3 a human player.\n\n"
+				+ "Player4: You must connect an external controller to make player4 a human player.\n\n";
+		#endif
 		panelHowToPlay.SetActive (true);
 		Button[] buttons = panelHowToPlay.GetComponentsInChildren<Button> ();
 		if (buttons.Length > 0) {
